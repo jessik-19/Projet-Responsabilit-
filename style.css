@@ -1,0 +1,54 @@
+body {
+    background-color: #f7f7f7;
+    color : #1d1d1b;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+h1,h2,h3 {
+    color : #00205b;
+}
+
+.stbutton > button {
+    background-color: #bfa663;
+    color : white;
+    border-radius: 5px;
+    padding: 0.5em 1em;
+    font-weight:  bold;
+}
+
+/* Bouton de téléchargement (Streamlit) */
+.stDownloadButton > button {
+   background-color: #bfa663; /* Doré clair */
+   color: white;
+   border: none;
+   border-radius: 5px;
+   font-weight: bold;
+   padding: 0.5em 1em;
+   cursor: pointer;
+   transition: background-color 0.3s ease;
+}
+
+.stDownloadButton > button:hover {
+   background-color: #a58f4f; /* Doré plus foncé au survol */
+}
+
+.block-container {
+   padding: 2rem;
+}
+
+/* Message de succès */
+.stAlert-success {
+   background-color: #e9f5e9;
+   border-left: 4px solid #228B22;
+}
+/* Encadré pour les fichiers 
+[data-testid="stFileUploader"] > div {
+   background-color: #ffffff;
+   padding: 1rem;
+   border-radius: 10px;
+   border: 1px solid #ccc;
+}*/
+
+footer {
+   visibility: hidden;
+}
