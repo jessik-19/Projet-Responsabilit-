@@ -113,11 +113,177 @@ def main():
     col1, col2, col3 = st.columns(3)
     with col1:
         fichier_extraction = st.file_uploader(" Extraction Grand Back FR", type="xlsx")
+        st.caption("Fichiers Grand Back contenant tous les Responsabilitén par Utilisateur.")
+        st.image("images/exemple_extraction.png", use_container_width=True)
     with col2:
         fichier_profils = st.file_uploader(" Accès aux outils - Profils types et outils", type="xlsx")
+        st.caption("Fichiers Accès aux outils contenant tous les Profils et Responsabilitén.")
+        st.image("images/exemple_acces.png", use_container_width=True)
     with col3:
         fichier_utilisateurs = st.file_uploader(" Liste utilisateurs Direction", type="xlsx")
+        st.caption("Fichiers avec la liste des utilisateurss avec une colonne de flag.")
+        st.image("images/exemple_equipe.png", use_container_width=True)
     if fichier_extraction and fichier_profils and fichier_utilisateurs:
+
+        try:
+
+            df_extraction = pd.read_excel(fichier_extraction)
+
+            #  Nettoyage complet
+
+            df_extraction.columns = (
+
+                df_extraction.columns
+
+                .astype(str)
+
+                .str.strip()
+
+                .str.replace("\xa0", " ", regex=True)
+
+                .str.replace("Unnamed: ", "", regex=True)
+
+                .str.replace(r"\d+", "", regex=True)
+
+                .str.normalize('NFKD')
+
+                .str.encode('ascii', errors='ignore')
+
+                .str.decode('utf-8')
+
+            )
+
+            colonnes_trouvees = [c for c in df_extraction.columns if c.strip() != ""]
+
+            #  Seulement les colonnes vraiment utilisées dans ton traitement
+
+            colonnes_utiles = {"Nom utilisateur", "Responsabilite"}  
+
+            colonnes_manquantes = colonnes_utiles - set(colonnes_trouvees)
+
+            if colonnes_manquantes:
+
+                st.warning(f"Colonnes manquantes dans le fichier Extraction Grand Back: {', '.join(colonnes_manquantes)}")
+                st.info(f"Colonnes détectées : {', '.join(colonnes_trouvees)}")
+
+            else:
+
+                st.success("Fichier Référence correctement chargé !")
+
+                st.info(f"Colonnes détectées : {', '.join(colonnes_trouvees)}")
+
+        except Exception as e:
+
+            st.error(f"Erreur dans le fichier Référence : {e}")
+            
+
+
+        # === 2️Fichier Back ===
+
+        try:
+
+            xls = pd.ExcelFile(fichier_profils)
+            if "Responsabilités Grand Back" in xls.sheet_names:
+                df_profils_clean = pd.read_excel(xls, sheet_name="Responsabilités Grand Back")
+                st.info("Feuille chargée : Responsabilités Grand Back")
+            else:
+                st.error("La feuille 'Responsabilités Grand Back' est introuvable dans le fichier Accès aux outils.")
+                #st.stop()
+
+            df_profils_clean.columns = (
+
+                df_profils_clean.columns
+
+                .astype(str)
+
+               .str.strip()
+
+               .str.replace("\xa0", " ", regex=True)
+
+               .str.replace("Unnamed: ", "", regex=True)
+
+               .str.replace(r"\d+", "", regex=True)
+
+               .str.normalize('NFKD')
+
+               .str.encode('ascii', errors='ignore')
+
+               .str.decode('utf-8')
+
+            )
+
+            colonnes_trouvees = [c for c in df_profils_clean.columns if c.strip() != ""]
+
+            colonnes_utiles = {"Profil type", "Responsabilite Grand Back"}  # celles que ton traitement utilise vraiment
+
+            colonnes_manquantes = colonnes_utiles - set(colonnes_trouvees)
+
+            if colonnes_manquantes:
+
+                st.warning(f"Colonnes manquantes dans le fichier Accès aux outils: {', '.join(colonnes_manquantes)}")
+                st.info(f"Colonnes détectées : {', '.join(colonnes_trouvees)}")
+
+            else:
+
+                st.success("Fichier Back correctement chargé !")
+
+                st.info(f"Colonnes détectées : {', '.join(colonnes_trouvees)}")
+
+        except Exception as e:
+
+           st.error(f"Erreur dans le fichier Back : {e}")
+
+
+        # === 3️Fichier Équipe ===
+
+        try:
+
+            df_utilisateurs = pd.read_excel(fichier_utilisateurs)
+
+            df_utilisateurs.columns = (
+
+                df_utilisateurs.columns
+
+                .astype(str)
+
+                .str.strip()
+
+                .str.replace("\xa0", " ", regex=True)
+
+                .str.replace("Unnamed: ", "", regex=True)
+
+                .str.replace(r"\d+", "", regex=True)
+
+                .str.normalize('NFKD')
+
+                .str.encode('ascii', errors='ignore')
+
+                .str.decode('utf-8')
+
+            )
+
+            colonnes_trouvees = [c for c in df_utilisateurs.columns if c.strip() != ""]
+
+            colonnes_utiles = {"LISTE DES UTILISATEURS", "PROFIL TYPE", "FLAG DIRECTION COMPTABLE CORPORATE"}
+
+            colonnes_manquantes = colonnes_utiles - set(colonnes_trouvees)
+
+            if colonnes_manquantes:
+
+                st.warning(f"Colonnes manquantes dans le fichier liste utilisateurs Direction : {', '.join(colonnes_manquantes)}")
+                st.info(f"Colonnes détectées : {', '.join(colonnes_trouvees)}")
+
+            else:
+
+                st.success("Fichier Équipe correctement chargé !")
+
+                st.info(f"Colonnes détectées : {', '.join(colonnes_trouvees)}")
+
+        except Exception as e:
+
+            st.error(f"Erreur dans le fichier Équipe : {e}")
+
+
         try:
             df_extraction = pd.read_excel(fichier_extraction, usecols=[0, 4])
             df_extraction.columns = ["Nom utilisateur", "Responsabilité"]
